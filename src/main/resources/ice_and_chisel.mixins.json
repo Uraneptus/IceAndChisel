@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.uraneptus.ice_and_chisel.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "refmap": "ice_and_chisel.refmap.json",
+  "mixins": [
+
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
