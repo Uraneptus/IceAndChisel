@@ -1,5 +1,6 @@
 package com.uraneptus.ice_and_chisel;
 
+import com.uraneptus.ice_and_chisel.core.registry.IACBlockEntity;
 import com.uraneptus.ice_and_chisel.core.registry.IACBlocks;
 import com.uraneptus.ice_and_chisel.core.registry.IACItems;
 import com.uraneptus.ice_and_chisel.data.*;
@@ -26,6 +27,7 @@ public class IceAndChisel {
         bus.addListener(this::gatherData);
 
         IACBlocks.BLOCKS.register(bus);
+        IACBlockEntity.BLOCK_ENTITY_TYPE.register(bus);
         IACItems.ITEMS.register(bus);
 
         MinecraftForge.EVENT_BUS.register(this);
