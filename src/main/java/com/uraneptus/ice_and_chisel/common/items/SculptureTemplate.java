@@ -19,7 +19,7 @@ public class SculptureTemplate extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        Tag tag = stack.getOrCreateTag().get("EntityTemplate");
+        Tag tag = stack.getOrCreateTag().get("id");
         if (tag != null) {
             tooltip.add(Component.literal(tag.getAsString()));
         }
