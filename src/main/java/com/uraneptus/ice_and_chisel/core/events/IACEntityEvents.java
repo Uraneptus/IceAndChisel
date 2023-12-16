@@ -7,6 +7,7 @@ import com.uraneptus.ice_and_chisel.common.items.SculptureTemplate;
 import com.uraneptus.ice_and_chisel.core.registry.IACBlocks;
 import com.uraneptus.ice_and_chisel.core.registry.IACItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,8 +26,10 @@ import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = IceAndChisel.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class IACEntityEvents {
@@ -39,14 +42,19 @@ public class IACEntityEvents {
         InteractionHand hand = event.getHand();
         Block block = level.getBlockState(pos).getBlock();
         ItemStack itemInMainHand = player.getItemInHand(InteractionHand.MAIN_HAND);
-        ItemStack itemInOffHand = player.getItemInHand(InteractionHand.OFF_HAND);
-        ItemStack sculptureItem = new ItemStack(IACItems.SCULPTURE_TEMPLATE.get());
+        ItemStack itemInOffHand = player.getOffhandItem();
+        //ItemStack sculptureItem = new ItemStack(IACItems.SCULPTURE_TEMPLATE.get());
 
         if (block instanceof IceBlock && itemInMainHand.is(IACItems.CHISEL.get()) && itemInOffHand.is(IACItems.SCULPTURE_TEMPLATE.get())) {
             IceSculptureBlock newBlock = (IceSculptureBlock) IACBlocks.ICE_SCULPTURE_BLOCK.get();
+
+            level.setBlockAndUpdate(pos, newBlock.defaultBlockState());
             IceSculptureBlockEntity blockEntity = (IceSculptureBlockEntity) newBlock.newBlockEntity(pos, newBlock.defaultBlockState());
-            blockEntity.setEntity(sculptureItem.getTag().get("id"), level); //getTag here returns null atm
-            level.setBlockAndUpdate(pos, blockEntity.getBlockState());
+            if (blockEntity != null) {
+                SculptureTemplate item = ((SculptureTemplate)itemInOffHand.getItem());
+                blockEntity.setResourceLocation(new ResourceLocation(item.getEntityNamespace(itemInOffHand), item.getEntityPath(itemInOffHand)));
+                level.setBlockEntity(blockEntity);
+            }
         }
     }
 
@@ -60,7 +68,8 @@ public class IACEntityEvents {
                 EntityHitResult entityHitResult = getLookedAtEntity(event);
                 if (entityHitResult != null) {
                     ItemStack sculptureTemplate = new ItemStack(IACItems.SCULPTURE_TEMPLATE.get());
-                    sculptureTemplate.getOrCreateTag().putString("id", Objects.requireNonNull(entityHitResult.getEntity().getEncodeId()));
+                    sculptureTemplate.getOrCreateTag().putString("EntityNamespaceI", Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.getKey(entityHitResult.getEntity().getType())).getNamespace());
+                    sculptureTemplate.getOrCreateTag().putString("EntityPathI", Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.getKey(entityHitResult.getEntity().getType())).getPath());
                     if (!player.getInventory().contains(sculptureTemplate)) {
                         if (!player.getInventory().add(sculptureTemplate)) {
                             player.drop(sculptureTemplate, false);
