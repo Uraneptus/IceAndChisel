@@ -5,6 +5,7 @@ import com.uraneptus.ice_and_chisel.common.blocks.IceSculptureBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
@@ -18,7 +19,8 @@ import java.util.function.Supplier;
 public class IACBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, IceAndChisel.MODID);
 
-    public static final RegistryObject<Block> ICE_SCULPTURE_BLOCK = BLOCKS.register("ice_sculpture", () -> new IceSculptureBlock(BlockBehaviour.Properties.of()));
+    public static final RegistryObject<Block> ICE_SCULPTURE_BLOCK = BLOCKS.register("ice_sculpture", () -> new IceSculptureBlock(
+            BlockBehaviour.Properties.copy(Blocks.ICE).isViewBlocking((b, l, p) -> false)));
 
     private static RegistryObject<Block> registerBlockWithItem(String name, Supplier<Block> block) {
         return registerBlockWithItem(name, block, new Item.Properties());

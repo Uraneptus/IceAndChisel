@@ -1,6 +1,7 @@
 package com.uraneptus.ice_and_chisel.common.blocks;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -16,7 +17,17 @@ public class IceSculptureBlock extends BaseEntityBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState pState) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
+        return RenderShape.INVISIBLE;
+    }
+
+    @Override
+    public float getShadeBrightness(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
+        return 1.0F;
+    }
+
+    @Override
+    public boolean propagatesSkylightDown(BlockState pState, BlockGetter pReader, BlockPos pPos) {
+        return true;
     }
 
     @Nullable

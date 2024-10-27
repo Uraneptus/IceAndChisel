@@ -1,19 +1,25 @@
 package com.uraneptus.ice_and_chisel.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.uraneptus.ice_and_chisel.common.blocks.IceSculptureBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.function.Function;
 
 @OnlyIn(Dist.CLIENT)
 public class IceSculptureBER<T extends IceSculptureBlockEntity> implements BlockEntityRenderer<T> {
@@ -25,7 +31,26 @@ public class IceSculptureBER<T extends IceSculptureBlockEntity> implements Block
 
     @Override
     public void render(T pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
+        Level level = pBlockEntity.getLevel();
         EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(pBlockEntity.getResourceLocation());
+        if (level == null || entityType == null) return;
+
+        pPoseStack.pushPose();
+        Entity entity = entityType.create(level);
+        if (entity instanceof LivingEntity livingEntity) {
+            pPoseStack.translate(0.5F, 0.0F, 0.5F);
+            pPoseStack.mulPose(Axis.YN.rotationDegrees(livingEntity.getVisualRotationYInDegrees()));
+            this.entityRenderDispatcher.setRenderShadow(false);
+            this.entityRenderDispatcher.render(entity, 0.0, 0.0, 0.0, 0.0F, 0, pPoseStack, pBuffer, pPackedLight);
+        }
+        pPoseStack.popPose();
+
+
+
+
+
+        //
+        /*
         if (entityType != null) {
             Entity entity = entityType.create(pBlockEntity.getLevel());
             if (entity != null) {
@@ -39,6 +64,8 @@ public class IceSculptureBER<T extends IceSculptureBlockEntity> implements Block
             }
         }
 
+
+         */
 
     }
 
